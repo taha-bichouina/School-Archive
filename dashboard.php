@@ -1,223 +1,262 @@
 <?php
 /**
- * Page du Tableau de Bord
+ * Page d'inscription
  * 
- * Affiche un aperçu du Système de Gestion des Archives Scolaires
+ * Gère l'inscription des utilisateurs pour le Système de Gestion des Archives Scolaires
  */
+
 // Démarrer la session
 session_start();
-// Vérifier si l'utilisateur est connecté
-if (!isset($_SESSION['user_id'])) {
-    header("Location: index.php");
+
+// Rediriger les utilisateurs connectés vers le tableau de bord
+if (isset($_SESSION['user_id'])) {
+    header("Location: dashboard.php");
     exit;
 }
-// Inclure l'en-tête
-include 'includes/header.php';
-// Inclure la connexion à la base de données
-require_once 'includes/db_connect.php';
-// Obtenir le nombre total d'étudiants
-$student_query = "SELECT COUNT(*) as total FROM students";
-$student_result = $conn->query($student_query);
-$student_count = $student_result ? $student_result->fetch_assoc()['total'] : 0;
-// Obtenir les comptes pour TC, 1BAC et BAC
-$tc_query = "SELECT COUNT(*) as total FROM students WHERE class_id = 'TC'";
-$tc_result = $conn->query($tc_query);
-$tc_count = $tc_result ? $tc_result->fetch_assoc()['total'] : 0;
-$bac1_query = "SELECT COUNT(*) as total FROM students WHERE class_id = '1BAC'";
-$bac1_result = $conn->query($bac1_query);
-$bac1_count = $bac1_result ? $bac1_result->fetch_assoc()['total'] : 0;
-$bac2_query = "SELECT COUNT(*) as total FROM students WHERE class_id = 'BAC'";
-$bac2_result = $conn->query($bac2_query);
-$bac2_count = $bac2_result ? $bac2_result->fetch_assoc()['total'] : 0;
-// Obtenir les étudiants récents
-$recent_students_query = "SELECT * FROM students ORDER BY created_at DESC LIMIT 5";
-$recent_students_result = $conn->query($recent_students_query);
-// Fermer la connexion
-$conn->close();
-?>
-<div class="container-fluid">
-    <!-- Section de l'En-tête -->
-    <div class="d-flex justify-content-between align-items-center pt-4 pb-3 border-bottom">
-        <h1 class="h2 text-primary fw-bold">Tableau de Bord des Archives Scolaires</h1>
-        <div class="btn-toolbar mb-2 mb-md-0">
-            <button type="button" class="btn btn-sm btn-outline-secondary me-2">
-                <i class="fas fa-download me-1"></i> Exporter
-            </button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">
-                <i class="fas fa-print me-1"></i> Imprimer
-            </button>
-            <a href="logout.php" class="btn btn-sm btn-danger ms-2">
-                <i class="fas fa-sign-out-alt me-1"></i> Déconnexion
-            </a>
-        </div>
-    </div>
-    <!-- Barre de Recherche avec Suggestions en Direct -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <form id="searchForm" action="search_results.php" method="get" class="mb-4">
-                <div class="input-group">
-                    <input type="text" name="search" id="searchInput" class="form-control" placeholder="Rechercher des étudiants par nom, ID ou CIN" required>
-                    <button type="submit" class="btn btn-primary">Rechercher</button>
-                </div>
-                <div id="searchSuggestions" class="list-group mt-2" style="display: none;"></div>
-            </form>
-        </div>
-    </div>
-    <!-- Cartes Statistiques -->
-    <div class="row mt-4">
-        <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body d-flex flex-column justify-content-between">
-                    <div>
-                        <h5 class="card-title text-primary">Nombre Total d'Étudiants</h5>
-                        <h2 class="display-5 fw-bold"><?php echo $student_count; ?></h2>
-                    </div>
-                    <div class="mt-3">
-                        <a href="students.php" class="btn btn-primary w-100">Voir les Détails</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body d-flex flex-column justify-content-between">
-                    <div>
-                        <h5 class="card-title text-info">Nombre Total d'Étudiants en TC</h5>
-                        <h2 class="display-5 fw-bold"><?php echo $tc_count; ?></h2>
-                    </div>
-                    <div class="mt-3">
-                        <a href="students.php?class=TC" class="btn btn-info w-100">Voir les Étudiants en TC</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body d-flex flex-column justify-content-between">
-                    <div>
-                        <h5 class="card-title text-success">Nombre Total d'Étudiants en 1BAC</h5>
-                        <h2 class="display-5 fw-bold"><?php echo $bac1_count; ?></h2>
-                    </div>
-                    <div class="mt-3">
-                        <a href="students.php?class=1BAC" class="btn btn-success w-100">Voir les Étudiants en 1BAC</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body d-flex flex-column justify-content-between">
-                    <div>
-                        <h5 class="card-title text-warning">Nombre Total d'Étudiants en 2BAC</h5>
-                        <h2 class="display-5 fw-bold"><?php echo $bac2_count; ?></h2>
-                    </div>
-                    <div class="mt-3">
-                        <a href="students.php?class=2BAC" class="btn btn-warning w-100">Voir les Étudiants en BAC</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Tableau des Étudiants Récents -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 fw-bold">Étudiants Ajoutés Récemment</h5>
-                    <a href="students.php" class="btn btn-primary btn-sm">Voir Tous les Étudiants</a>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover table-bordered">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nom</th>
-                                    <th>ID Utilisateur/CIN</th>
-                                    <th>Classe</th>
-                                    <th>Date de Naissance</th>
-                                    <th>Date de Début</th>
-                                    <th>Date de Fin</th>
-                                    <th>Année Scolaire</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if ($recent_students_result && $recent_students_result->num_rows > 0): ?>
-                                    <?php while ($student = $recent_students_result->fetch_assoc()): ?>
-                                        <tr>
-                                            <td><?php echo htmlspecialchars($student['student_id']); ?></td>
-                                            <td><?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?></td>
-                                            <td><?php echo htmlspecialchars($student['user_id_or_cin']); ?></td>
-                                            <td><?php echo htmlspecialchars($student['class_id']); ?></td>
-                                            <td><?php echo htmlspecialchars($student['date_of_birth']); ?></td>
-                                            <td><?php echo htmlspecialchars($student['date_of_start']); ?></td>
-                                            <td><?php echo htmlspecialchars($student['date_of_end'] ?? 'N/A'); ?></td>
-                                            <td><?php echo htmlspecialchars($student['season']); ?></td>
-                                            <td>
-                                                <a href="student_view.php?id=<?php echo $student['id']; ?>" class="btn btn-info btn-sm">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    <?php endwhile; ?>
-                                <?php else: ?>
-                                    <tr>
-                                        <td colspan="9" class="text-center">Aucun étudiant trouvé</td>
-                                    </tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Bouton Flottant pour Ajouter un Étudiant -->
-<a href="student_add.php" class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-4" style="width: 60px; height: 60px; font-size: 24px;">
-    <i class="fas fa-plus"></i>
-</a>
-<!-- JavaScript pour les Suggestions de Recherche en Direct -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-$(document).ready(function() {
-    $('#searchInput').on('input', function() {
-        const query = $(this).val().trim();
-        if (query.length >= 2) {
-            $.ajax({
-                url: 'search_suggestions.php',
-                method: 'GET',
-                data: { search: query },
-                success: function(response) {
-                    const suggestions = JSON.parse(response);
-                    const suggestionsDiv = $('#searchSuggestions');
-                    suggestionsDiv.empty();
-                    if (suggestions.length > 0) {
-                        suggestionsDiv.css('display', 'block');
-                        suggestions.forEach(function(suggestion) {
-                            suggestionsDiv.append(
-                                `<a href="search_results.php?search=${encodeURIComponent(suggestion)}" class="list-group-item list-group-item-action">${suggestion}</a>`
-                            );
-                        });
+
+// Initialiser les variables
+$username = $password = $confirm_password = $first_name = $last_name = "";
+$error = "";
+
+// Traiter la soumission du formulaire d'inscription
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Inclure la connexion à la base de données
+    require_once 'includes/db_connect.php';
+    
+    // Récupérer les données du formulaire
+    $username = trim($_POST['username']);
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
+    $first_name = trim($_POST['first_name']);
+    $last_name = trim($_POST['last_name']);
+    
+    // Valider les données du formulaire
+    if (empty($username) || empty($password) || empty($confirm_password) || empty($first_name) || empty($last_name)) {
+        $error = "Tous les champs sont obligatoires";
+    } elseif ($password !== $confirm_password) {
+        $error = "Les mots de passe ne correspondent pas";
+    } else {
+        // Vérifier si le nom d'utilisateur existe déjà
+        $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
+        if ($stmt) {
+            $stmt->bind_param("s", $username);
+            $stmt->execute();
+            $stmt->store_result();
+            
+            if ($stmt->num_rows > 0) {
+                $error = "Le nom d'utilisateur existe déjà";
+            } else {
+                // Hacher le mot de passe
+                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                
+                // Insérer un nouvel utilisateur dans la base de données avec un rôle par défaut ("student")
+                $role = "student"; // Rôle par défaut
+                $insert_stmt = $conn->prepare("INSERT INTO users (username, password, first_name, last_name, role, status) VALUES (?, ?, ?, ?, ?, 'Active')");
+                if ($insert_stmt) {
+                    $insert_stmt->bind_param("sssss", $username, $hashed_password, $first_name, $last_name, $role);
+                    
+                    if ($insert_stmt->execute()) {
+                        // Inscription réussie, rediriger vers la page de connexion
+                        header("Location: index.php?registration=success");
+                        exit;
                     } else {
-                        suggestionsDiv.css('display', 'none');
+                        $error = "Une erreur de base de données s'est produite lors de l'inscription";
                     }
+                    
+                    $insert_stmt->close();
+                } else {
+                    $error = "Une erreur de base de données s'est produite";
                 }
-            });
+            }
+            
+            $stmt->close();
         } else {
-            $('#searchSuggestions').css('display', 'none');
+            $error = "Une erreur de base de données s'est produite";
         }
-    });
-    // Masquer les suggestions lors d'un clic à l'extérieur
-    $(document).on('click', function(event) {
-        if (!$(event.target).closest('#searchInput, #searchSuggestions').length) {
-            $('#searchSuggestions').css('display', 'none');
-        }
-    });
-});
-</script>
-<?php
-// Inclure le pied de page
-include 'includes/footer.php';
+    }
+    
+    // Fermer la connexion
+    $conn->close();
+}
 ?>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Système de Gestion des Archives Scolaires</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <!-- Google Fonts (Poppins) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+        }
+        .card {
+            border: none;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border-radius: 1.5rem 1.5rem 0 0;
+        }
+        .form-control:focus {
+            border-color: #6a11cb;
+            box-shadow: 0 0 0 0.25rem rgba(106, 17, 203, 0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border: none;
+            transition: transform 0.3s ease-in-out;
+        }
+        .btn-primary:hover {
+            transform: scale(1.05);
+        }
+        .input-group-text {
+            background: #f8f9fa;
+            border: none;
+            color: #6a11cb;
+        }
+        .alert {
+            border-radius: 1rem;
+        }
+        .small a {
+            color: #6a11cb;
+            text-decoration: none;
+        }
+        .small a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-lg-5 col-md-7">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-transparent text-center">
+                        <h3 class="text-primary fw-bold mb-0">Système de Gestion des Archives Scolaires</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Message de succès -->
+                        <?php if (isset($_GET['registration']) && $_GET['registration'] === 'success'): ?>
+                            <div class="alert alert-success rounded-pill">Inscription réussie ! Veuillez vous connecter.</div>
+                        <?php endif; ?>
+                        
+                        <!-- Message d'erreur -->
+                        <?php if (!empty($error)): ?>
+                            <div class="alert alert-danger rounded-pill"><?php echo htmlspecialchars($error); ?></div>
+                        <?php endif; ?>
+                        
+                        <!-- Formulaire d'inscription -->
+                        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Nom d'utilisateur</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" id="username" name="username" placeholder="Entrez votre nom d'utilisateur" value="<?php echo htmlspecialchars($username); ?>" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Mot de passe</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Entrez votre mot de passe" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label">Confirmer le mot de passe</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirmez votre mot de passe" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="first_name" class="form-label">Prénom</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Entrez votre prénom" value="<?php echo htmlspecialchars($first_name); ?>" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="last_name" class="form-label">Nom de famille</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Entrez votre nom de famille" value="<?php echo htmlspecialchars($last_name); ?>" required>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg">S'inscrire</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center py-3 bg-transparent">
+                        <div class="small">
+                            Vous avez déjà un compte ? 
+                            <a href="index.php" class="text-decoration-none text-primary fw-bold">Connectez-vous ici</a>
+                        </div>
+                        <div class="small text-muted">&copy; <?php echo date("Y"); ?> Système de Gestion des Archives Scolaires</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // Basculer la visibilité du mot de passe principal
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Basculer la visibilité du champ de confirmation du mot de passe
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+            const confirmPasswordInput = document.getElementById('confirm_password');
+            const icon = this.querySelector('i');
+            
+            if (confirmPasswordInput.type === 'password') {
+                confirmPasswordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                confirmPasswordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    </script>
+</body>
+</html>
