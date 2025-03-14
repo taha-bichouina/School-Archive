@@ -87,34 +87,74 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription - Système de Gestion des Archives Scolaires</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- CSS personnalisé -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <!-- Google Fonts (Poppins) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+        }
+        .card {
+            border: none;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border-radius: 1.5rem 1.5rem 0 0;
+        }
+        .form-control:focus {
+            border-color: #6a11cb;
+            box-shadow: 0 0 0 0.25rem rgba(106, 17, 203, 0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border: none;
+            transition: transform 0.3s ease-in-out;
+        }
+        .btn-primary:hover {
+            transform: scale(1.05);
+        }
+        .input-group-text {
+            background: #f8f9fa;
+            border: none;
+            color: #6a11cb;
+        }
+        .alert {
+            border-radius: 1rem;
+        }
+        .small a {
+            color: #6a11cb;
+            text-decoration: none;
+        }
+        .small a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
     <div class="container">
-        <div class="row justify-content-center mt-5">
+        <div class="row justify-content-center align-items-center min-vh-100">
             <div class="col-lg-5 col-md-7">
-                <div class="card shadow-lg border-0 rounded-lg mt-5">
-                    <div class="card-header bg-primary text-white text-center">
-                        <h3 class="font-weight-light my-2">Système de Gestion des Archives Scolaires</h3>
+                <div class="card shadow-lg">
+                    <div class="card-header bg-transparent text-center">
+                        <img src="assets/img/logo.png" alt="Logo de l'école" class="img-fluid mb-3" style="max-height: 80px;">
+                        <h3 class="text-primary fw-bold mb-0">Système de Gestion des Archives Scolaires</h3>
                     </div>
-                    <div class="card-body">
-                        <!-- Logo de l'école -->
-                        <div class="text-center mb-4">
-                            <img src="assets/img/logo.png" alt="Logo de l'école" class="img-fluid" style="max-height: 100px;">
-                        </div>
-                        
+                    <div class="card-body p-4">
                         <!-- Message de succès -->
                         <?php if (isset($_GET['registration']) && $_GET['registration'] === 'success'): ?>
-                            <div class="alert alert-success">Inscription réussie ! Veuillez vous connecter.</div>
+                            <div class="alert alert-success rounded-pill">Inscription réussie ! Veuillez vous connecter.</div>
                         <?php endif; ?>
                         
                         <!-- Message d'erreur -->
                         <?php if (!empty($error)): ?>
-                            <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+                            <div class="alert alert-danger rounded-pill"><?php echo htmlspecialchars($error); ?></div>
                         <?php endif; ?>
                         
                         <!-- Formulaire d'inscription -->
@@ -161,7 +201,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             
                             <div class="mb-4">
                                 <label for="role" class="form-label">Rôle</label>
-                                <select class="form-select" id="role" name="role" required>
+                                <select class="form-select form-control" id="role" name="role" required>
                                     <option value="" disabled selected>Sélectionnez votre rôle</option>
                                     <option value="admin" <?php echo ($role === 'admin') ? 'selected' : ''; ?>>Administrateur</option>
                                     <option value="teacher" <?php echo ($role === 'teacher') ? 'selected' : ''; ?>>Enseignant</option>
@@ -174,7 +214,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </div>
                         </form>
                     </div>
-                    <div class="card-footer text-center py-3">
+                    <div class="card-footer text-center py-3 bg-transparent">
                         <div class="small">
                             Vous avez déjà un compte ? <a href="index.php" class="text-decoration-none">Connectez-vous ici</a>
                         </div>
@@ -185,6 +225,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
