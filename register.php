@@ -15,7 +15,7 @@ if (isset($_SESSION['user_id'])) {
 }
 
 // Initialiser les variables
-$username = $password = $first_name = $last_name = $role = "";
+$username = $password = $first_name = $last_name = "";
 $error = "";
 
 // Traiter la soumission du formulaire d'inscription
@@ -29,10 +29,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $confirm_password = $_POST['confirm_password'];
     $first_name = trim($_POST['first_name']);
     $last_name = trim($_POST['last_name']);
-    $role = trim($_POST['role']);
     
     // Valider les données du formulaire
-    if (empty($username) || empty($password) || empty($confirm_password) || empty($first_name) || empty($last_name) || empty($role)) {
+    if (empty($username) || empty($password) || empty($confirm_password) || empty($first_name) || empty($last_name)) {
         $error = "Tous les champs sont obligatoires";
     } elseif ($password !== $confirm_password) {
         $error = "Les mots de passe ne correspondent pas";
@@ -50,7 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Hacher le mot de passe
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
                 
-                // Insérer un nouvel utilisateur dans la base de données
+                // Insérer un nouvel utilisateur dans la base de données avec un rôle par défaut ("student")
+                $role = "student"; // Rôle par défaut
                 $insert_stmt = $conn->prepare("INSERT INTO users (username, password, first_name, last_name, role, status) VALUES (?, ?, ?, ?, ?, 'Actif')");
                 if ($insert_stmt) {
                     $insert_stmt->bind_param("sssss", $username, $hashed_password, $first_name, $last_name, $role);
@@ -143,7 +143,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="col-lg-5 col-md-7">
                 <div class="card shadow-lg">
                     <div class="card-header bg-transparent text-center">
-                        <img src="assets/img/logo.png" alt="Logo de l'école" class="img-fluid mb-3" style="max-height: 80px;">
                         <h3 class="text-primary fw-bold mb-0">Système de Gestion des Archives Scolaires</h3>
                     </div>
                     <div class="card-body p-4">
@@ -197,16 +196,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <span class="input-group-text"><i class="fas fa-user"></i></span>
                                     <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Entrez votre nom de famille" value="<?php echo htmlspecialchars($last_name); ?>" required>
                                 </div>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <label for="role" class="form-label">Rôle</label>
-                                <select class="form-select form-control" id="role" name="role" required>
-                                    <option value="" disabled selected>Sélectionnez votre rôle</option>
-                                    <option value="admin" <?php echo ($role === 'admin') ? 'selected' : ''; ?>>Administrateur</option>
-                                    <option value="teacher" <?php echo ($role === 'teacher') ? 'selected' : ''; ?>>Enseignant</option>
-                                    <option value="student" <?php echo ($role === 'student') ? 'selected' : ''; ?>>Étudiant</option>
-                                </select>
                             </div>
                             
                             <div class="d-grid gap-2 mt-4">

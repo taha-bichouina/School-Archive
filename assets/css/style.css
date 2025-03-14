@@ -11,7 +11,7 @@ body {
 
 .card {
     border: none;
-    border-radius: 10px;
+    border-radius: 50px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -48,12 +48,13 @@ body {
     background-color: #ffc107;
 }
 
+
 /* Responsive Adjustments */
+
 @media (max-width: 768px) {
     .card {
         margin-bottom: 20px;
     }
-
     .table-responsive {
         max-height: 200px;
     }
