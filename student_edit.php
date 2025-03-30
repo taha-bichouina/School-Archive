@@ -42,6 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($student)) {
     $date_of_birth = trim($_POST['date_of_birth']);
     $date_of_start = trim($_POST['date_of_start']);
     $date_of_end = trim($_POST['date_of_end']);
+    $place_of_birth = trim($_POST['place_of_birth']);
 
     // Validation
     if (empty($first_name) || empty($last_name) || empty($user_id_or_cin) || empty($class_id) || 
@@ -59,20 +60,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($student)) {
             season = ?, 
             date_of_birth = ?, 
             date_of_start = ?, 
-            date_of_end = ?
+            date_of_end = ?,
+            place_of_birth = ?
             WHERE id = ?");
         
-        $stmt->bind_param("ssssssssi", 
-            $first_name, 
-            $last_name, 
-            $user_id_or_cin, 
-            $class_id, 
-            $season, 
-            $date_of_birth, 
-            $date_of_start, 
-            $date_of_end, 
-            $student_id);
-        
+        $stmt->bind_param("sssssssssi", 
+        $last_name, 
+        $first_name, 
+        $user_id_or_cin, 
+        $class_id, 
+        $season, 
+        $date_of_birth, 
+        $date_of_start, 
+        $date_of_end, 
+        $place_of_birth,
+        $student_id);
+
         if ($stmt->execute()) {
             $_SESSION['success_message'] = "Étudiant mis à jour avec succès";
             header("Location: student_view.php?id=" . $student_id);
@@ -311,6 +314,10 @@ $conn->close();
                                        value="<?php echo htmlspecialchars($student['date_of_birth']); ?>" required>
                             </div>
                             <div class="col-md-6">
+                                <label for="place_of_birth" class="form-label">Lieu De Naissance</label>
+                                <input type="text" class="form-control" id="place_of_birth" name="place_of_birth" value="<?php echo htmlspecialchars($student['place_of_birth']);?>">
+                            </div>
+                            <div class="col-md-6">
                                 <label for="date_of_start" class="form-label">Date de début</label>
                                 <input type="date" class="form-control" id="date_of_start" name="date_of_start" 
                                        value="<?php echo htmlspecialchars($student['date_of_start']); ?>" required>
@@ -345,5 +352,8 @@ $conn->close();
             // You can add form validation or other interactive features here
         });
     </script>
+    <footer class="text-center py-3 mt-5 text-secondary" style="font-size: 0.9rem;">
+    &copy; <?php echo date("Y"); ?> Taha Bichouina & Nacer Eddine Bouras & Lycée Chahid Hrizi
+</footer>
 </body>
 </html>

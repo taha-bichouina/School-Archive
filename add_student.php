@@ -40,12 +40,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($stmt->num_rows > 0) {
                 $error = "L'ID étudiant existe déjà";
             } else {
-                $insert_stmt = $conn->prepare("INSERT INTO students (student_id, first_name, last_name, user_id_or_cin, class_id, season, date_of_birth, date_of_start, date_of_end) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $insert_stmt = $conn->prepare("INSERT INTO students (student_id, first_name, last_name, user_id_or_cin, class_id, season, date_of_birth, date_of_start, date_of_end, place_of_birth) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 if ($insert_stmt) {
-                    $insert_stmt->bind_param("sssssssss", $student_id, $first_name, $last_name, $user_id_or_cin, $class_id, $season, $date_of_birth, $date_of_start, $date_of_end);
+                    $insert_stmt->bind_param("ssssssssss", $student_id, $first_name, $last_name, $user_id_or_cin, $class_id, $season, $date_of_birth, $date_of_start, $date_of_end, $place_of_birth);
                     if ($insert_stmt->execute()) {
                         echo '<div class="alert alert-success alert-dismissible fade show" role="alert">Étudiant ajouté avec succès !<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-                        $student_id = $first_name = $last_name = $user_id_or_cin = $class_id = $season = $date_of_birth = $date_of_start = $date_of_end = "";
+                        $student_id = $first_name = $last_name = $user_id_or_cin = $class_id = $season = $date_of_birth = $date_of_start = $date_of_end = $place_of_birth = "";
                     } else {
                         $error = "Une erreur de base de données s'est produite lors de l'insertion";
                     }
@@ -255,7 +255,11 @@ function validateDate($date, $format = 'Y-m-d') {
                         <i class="fas fa-graduation-cap"></i>
                     </div>
                     <div>
-                        <h1 class="h4 mb-0 fw-bold">Archives Scolaires</h1>
+                    <h1 class="h4 mb-0 fw-bold">
+                            <a href="dashboard.php" class="text-decoration-none text-white">
+                                <i class="fas fa-graduation-cap me-2"></i>Archives Scolaires
+                            </a>
+                        </h1>
                         <p class="text-secondary mb-0">Ajouter un Étudiant</p>
                     </div>
                 </div>
@@ -374,6 +378,10 @@ document.getElementById("place_of_birth").addEventListener("input", function () 
     }
 });
 </script>
+
+<footer class="text-center py-3 mt-5 text-secondary" style="font-size: 0.9rem;">
+    &copy; <?php echo date("Y"); ?> Taha Bichouina & Nacer Eddine Bouras & Lycée Chahid Hrizi
+</footer>
 
 </body>
 </html>

@@ -519,5 +519,8 @@ $total_pages = ceil($total_rows / $limit);
 
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <footer class="text-center py-3 mt-5 text-secondary" style="font-size: 0.9rem;">
+    &copy; <?php echo date("Y"); ?> Taha Bichouina & Nacer Eddine Bouras & Lycée Chahid Hrizi
+</footer>
 </body>
 </html>

@@ -269,7 +269,11 @@ $conn->close();
                         <i class="fas fa-graduation-cap"></i>
                     </div>
                     <div>
-                        <h1 class="h4 mb-0 fw-bold">Archives Scolaires</h1>
+                        <h1 class="h4 mb-0 fw-bold">
+                            <a href="dashboard.php" class="text-decoration-none text-white">
+                                <i class="fas fa-graduation-cap me-2"></i>Archives Scolaires
+                            </a>
+                        </h1>
                         <p class="text-secondary mb-0">Tableau de Bord Administratif</p>
                     </div>
                 </div>
@@ -359,6 +363,10 @@ $conn->close();
                                         <tr>
                                             <td>Date de Naissance</td>
                                             <td><?php echo htmlspecialchars($student['date_of_birth']); ?></td>
+                                        </tr>     
+                                        <tr>
+                                            <td>Lieu De Naissance</td>
+                                            <td><?php echo htmlspecialchars($student['place_of_birth']); ?></td>
                                         </tr>
                                         <tr>
                                             <td>Date de Début</td>
@@ -368,6 +376,7 @@ $conn->close();
                                             <td>Date de Fin</td>
                                             <td><?php echo htmlspecialchars($student['date_of_end']); ?></td>
                                         </tr>
+
                                     </tbody>
                                 </table>
                             </div>
@@ -400,5 +409,8 @@ $conn->close();
             }
         }
     </script>
+    <footer class="text-center py-3 mt-5 text-secondary" style="font-size: 0.9rem;">
+    &copy; <?php echo date("Y"); ?> Taha Bichouina & Nacer Eddine Bouras & Lycée Chahid Hrizi
+</footer>
 </body>
 </html>

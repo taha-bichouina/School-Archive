@@ -221,5 +221,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         });
     </script>
+    <footer class="text-center py-3 mt-5 text-secondary" style="font-size: 0.9rem;">
+    &copy; <?php echo date("Y"); ?> Taha Bichouina & Nacer Eddine Bouras & Lycée Chahid Hrizi
+</footer>
 </body>
 </html>
